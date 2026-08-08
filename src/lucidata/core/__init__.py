@@ -1,4 +1,17 @@
 from lucidata.core.datatypes import DataType
-from lucidata.core.schema import ColumnHealth, DataQualityIndex
+from lucidata.core.schema import (
+    CategoricalProfile,
+    ColumnHealth,
+    CorrelationPair,
+    DataQualityIndex,
+    FeatureDriver,
+)
 
-__all__ = ["DataType", "ColumnHealth", "DataQualityIndex"]
+__all__ = [
+    "DataType",
+    "ColumnHealth",
+    "DataQualityIndex",
+    "CorrelationPair",
+    "FeatureDriver",
+    "CategoricalProfile",
+]

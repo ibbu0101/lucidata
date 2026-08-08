@@ -1,6 +1,6 @@
-import tempfile
+import datetime
+import sqlite3
 from pathlib import Path
-from typing import Generator
 
 import numpy as np
 import polars as pl
@@ -37,8 +37,6 @@ def df_categorical() -> pl.DataFrame:
 @pytest.fixture
 def df_mixed() -> pl.DataFrame:
     n = 200
-    # Generate datetime range manually since pl.datetime_range doesn't have 'n' param
-    import datetime
     start = datetime.datetime(2020, 1, 1)
     dates = [start + datetime.timedelta(days=i) for i in range(n)]
     return pl.DataFrame({
@@ -108,6 +106,55 @@ def df_with_outliers() -> pl.DataFrame:
     return pl.DataFrame({"values": np.concatenate([normal, outliers])})
 
 
+# Stats-specific fixtures
+@pytest.fixture
+def df_correlated() -> pl.DataFrame:
+    """DataFrame with known strong positive correlation (r ≈ 0.95)."""
+    n = 500
+    x = np.random.normal(0, 1, n)
+    y = x * 0.9 + np.random.normal(0, 0.3, n)  # strong positive
+    z = -x * 0.8 + np.random.normal(0, 0.4, n)  # strong negative
+    return pl.DataFrame({"x": x, "y": y, "z": z})
+
+
+@pytest.fixture
+def df_with_target() -> pl.DataFrame:
+    """DataFrame with numeric target for regression and categorical target for classification."""
+    n = 300
+    f1 = np.random.normal(0, 1, n)
+    f2 = np.random.normal(5, 2, n)
+    f3 = np.random.exponential(1, n)
+    # Regression target: linear combo + noise
+    target_num = 2.5 * f1 - 1.2 * f2 + 0.8 * f3 + np.random.normal(0, 0.5, n)
+    # Classification target: 3 classes based on quartiles
+    bins = np.percentile(target_num, [33, 66])
+    target_cat = np.array(
+        ["low" if v <= bins[0] else "high" if v >= bins[1] else "med" for v in target_num]
+    )
+    return pl.DataFrame({
+        "f1": f1,
+        "f2": f2,
+        "f3": f3,
+        "target_num": target_num,
+        "target_cat": target_cat,
+    })
+
+
+@pytest.fixture
+def df_large_100k() -> pl.DataFrame:
+    """100k rows × 10 numeric columns for benchmarking."""
+    n = 100_000
+    np.random.seed(123)
+    data = {f"feat_{i}": np.random.normal(0, 1, n) for i in range(10)}
+    # Add one target column
+    target_vals = (
+        sum(data[f"feat_{i}"] * (i + 1) * 0.1 for i in range(5))
+        + np.random.normal(0, 0.5, n)
+    )
+    data["target"] = target_vals
+    return pl.DataFrame(data)
+
+
 # File-based fixtures
 @pytest.fixture
 def tmp_csv(tmp_path: Path) -> Path:
@@ -139,10 +186,11 @@ def tmp_xlsx(tmp_path: Path) -> Path:
 def tmp_sqlite(tmp_path: Path) -> Path:
     if pd is None:
         pytest.skip("pandas not installed")
-    import sqlite3
 
     p = tmp_path / "test.db"
     conn = sqlite3.connect(p)
-    pl.DataFrame({"id": [1, 2, 3], "val": ["a", "b", "c"]}).to_pandas().to_sql("mytable", conn, index=False)
+    pl.DataFrame({"id": [1, 2, 3], "val": ["a", "b", "c"]}).to_pandas().to_sql(
+        "mytable", conn, index=False
+    )
     conn.close()
     return p

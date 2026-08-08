@@ -1,6 +1,6 @@
 import pytest
 
-from lucidata.engine.auditor import audit, _health_grade
+from lucidata.engine.auditor import _health_grade, audit
 
 
 def test_audit_empty_dataframe(df_empty) -> None:

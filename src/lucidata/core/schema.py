@@ -31,3 +31,32 @@ class DataQualityIndex(BaseModel):
     total_null_percentage: float
     health_grade: str = Field(description="A, B, C, D, or F based on overall score")
     column_health: dict[str, ColumnHealth]
+
+
+class CorrelationPair(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    feature_a: str
+    feature_b: str
+    pearson_coef: float
+    spearman_coef: float
+    strength: str = Field(description="Weak, Moderate, Strong, or Very Strong")
+
+
+class FeatureDriver(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    feature_name: str
+    importance_score: float = Field(ge=0.0, le=1.0)
+    rank: int
+    relationship_summary: str
+
+
+class CategoricalProfile(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    column: str
+    total_count: int
+    unique_count: int
+    top_values: list[tuple[str, int]]
+    entropy: float

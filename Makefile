@@ -1,4 +1,4 @@
-.PHONY: help install lint format test run-cli clean
+.PHONY: help install lint format test test-fast run-cli clean
 
 help:        ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-12s %s\n",$$1,$$2}'
@@ -15,6 +15,9 @@ format:      ## Ruff format + autofix
 
 test:        ## Pytest with coverage
 	uv run pytest --cov=lucidata --cov-report=term-missing
+
+test-fast:   ## Pytest excluding slow (benchmark) tests
+	uv run pytest -m "not slow"
 
 run-cli:     ## Smoke-run the CLI
 	uv run lucidata --help
