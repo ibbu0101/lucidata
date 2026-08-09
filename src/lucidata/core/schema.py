@@ -60,3 +60,12 @@ class CategoricalProfile(BaseModel):
     unique_count: int
     top_values: list[tuple[str, int]]
     entropy: float
+
+
+class ExecutiveSummaryNarrative(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    headline: str = Field(description="High-level title summarizing the dataset narrative")
+    key_highlights: list[str] = Field(description="3-5 critical insights derived from statistical findings")
+    data_anomalies: list[str] = Field(description="Noteworthy quality warnings, outliers, or missingness patterns")
+    actionable_next_steps: list[str] = Field(description="Concrete operational or analytical recommendations")

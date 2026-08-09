@@ -4,6 +4,7 @@ from lucidata.core.schema import (
     ColumnHealth,
     CorrelationPair,
     DataQualityIndex,
+    ExecutiveSummaryNarrative,
     FeatureDriver,
 )
 
@@ -14,4 +15,5 @@ __all__ = [
     "CorrelationPair",
     "FeatureDriver",
     "CategoricalProfile",
+    "ExecutiveSummaryNarrative",
 ]
