@@ -1,4 +1,5 @@
 from lucidata.core.datatypes import DataType
+from lucidata.core.exceptions import VisualizationError
 from lucidata.core.schema import (
     CategoricalProfile,
     ColumnHealth,
@@ -16,4 +17,5 @@ __all__ = [
     "FeatureDriver",
     "CategoricalProfile",
     "ExecutiveSummaryNarrative",
+    "VisualizationError",
 ]

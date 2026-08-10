@@ -8,3 +8,7 @@ class IngestionError(LUCIDATAError):
 
 class LLMProviderError(LUCIDATAError):
     """Raised when an LLM provider call fails irrecoverably (auth, network, invalid response)."""
+
+
+class VisualizationError(LUCIDATAError):
+    """Raised when chart rendering fails (empty data, invalid config, plotly errors)."""

@@ -224,6 +224,19 @@ def tmp_sqlite(tmp_path: Path) -> Path:
     return p
 
 
+# Viz-specific fixtures
+@pytest.fixture
+def df_datetime_only() -> pl.DataFrame:
+    """DataFrame with only datetime columns for viz edge-case testing."""
+    n = 50
+    start = datetime.datetime(2020, 1, 1)
+    dates = [start + datetime.timedelta(days=i) for i in range(n)]
+    return pl.DataFrame({
+        "date_col": dates,
+        "datetime_col": [start + datetime.timedelta(hours=i) for i in range(n)],
+    })
+
+
 # AI-specific fixtures
 @pytest.fixture
 def sample_dqi() -> DataQualityIndex:
