@@ -1,10 +1,18 @@
+<p align="center">
+  <img src="logos/lucidata_lockup_terminal_v2.svg" alt="LUCIDATA" width="700"/>
+</p>
+
+<p align="center">
+  <img src="logos/lucidata_icon_terminal_v2 (1).svg" alt="LUCIDATA Icon" width="120"/>
+</p>
+
 # LUCIDATA
 
 > Local-first AI-powered Exploratory Data Analysis (EDA) reports with privacy-preserving narrative summaries.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Phase 3 of 8](https://img.shields.io/badge/phase-3%20of%208-green.svg)](PROGRESS.md)
+[![Phase 5 of 8](https://img.shields.io/badge/phase-5%20of%208-green.svg)](PROGRESS.md)
 [![Coverage 92%](https://img.shields.io/badge/coverage-92%25-brightgreen.svg)](#)
 
 Transform raw tabular datasets (CSV, Parquet, Excel, SQLite) into interactive EDA reports featuring plain-English AI narrative summaries — all running locally with zero raw data sent to external APIs.
@@ -26,7 +34,8 @@ Transform raw tabular datasets (CSV, Parquet, Excel, SQLite) into interactive ED
 | Correlation mining | ✅ Phase 3 | Pearson + Spearman, `|r| ≥ 0.35` filter, strength buckets |
 | Feature driver ranking | ✅ Phase 3 | Random Forest + Mutual Info (50/50 blend), regression & classification |
 | Categorical profiling | ✅ Phase 3 | Top-k values, entropy, cardinality |
-| AI narrative engine | ⏳ Phase 4 | LiteLLM + Ollama, structured Pydantic output, heuristic fallback |
+| AI narrative engine | ✅ Phase 4 | LiteLLM + Ollama, structured Pydantic output, heuristic fallback |
+| Interactive Visualization Engine | ✅ Phase 5 | Plotly charts: distributions, categorical bars, correlation heatmaps, feature importance |
 | HTML dashboard export | ⏳ Phase 6 | Jinja2 + Plotly, dark/light mode, responsive |
 | PDF report export | ⏳ Phase 6 | WeasyPrint CSS Paged Media, 2-page executive layout |
 | CLI (Typer + Rich) | ⏳ Phase 7 | `lucidata analyze data.csv --target sales` |
@@ -94,6 +103,16 @@ for name, p in profiles.items():
     print(f"  {name}: {p.unique_count} unique, entropy={p.entropy:.2f}")
     for val, cnt in p.top_values:
         print(f"    {val}: {cnt}")
+
+# Visualization (Phase 5)
+html_dist = dd.plot_distributions(df)
+html_cats = dd.plot_categorical_bars(df)
+html_corr = dd.plot_correlation_heatmap(df)
+html_drivers = dd.plot_feature_importance(drivers)
+
+# Save to file
+with open("distributions.html", "w") as f:
+    f.write(html_dist)
 ```
 
 ## CLI (Phase 7 preview)
@@ -159,19 +178,20 @@ lucidata/
 ├── .github/workflows/       # CI/CD
 ├── docs/                    # Architecture, usage guides
 ├── examples/                # Sample datasets, demo scripts
+├── logos/                   # Brand assets (banner + icon)
 ├── src/lucidata/
-│   ├── __init__.py          # Main API (ingest, audit, correlations, drivers, ...)
+│   ├── __init__.py          # Main API (ingest, audit, correlations, drivers, viz, ...)
 │   ├── config.py            # Global settings
 │   ├── core/                # Datatypes, schema (Pydantic), exceptions
 │   ├── engine/
 │   │   ├── ingest.py        # Multi-format loader (Polars-first)
 │   │   ├── auditor.py       # DQI calculation
 │   │   └── stats.py         # Correlations, drivers, categorical profiling
-│   ├── ai/                  # LLM abstraction, privacy layer, fallback (Phase 4+)
-│   ├── viz/                 # Plotly chart builders (Phase 5+)
-│   ├── export/              # Jinja2 templates, WeasyPrint PDF (Phase 6+)
-│   ├── cli/                 # Typer CLI (Phase 7+)
-│   └── app/                 # Streamlit Web UI (Phase 7+)
+│   ├── ai/                  # LLM abstraction, privacy layer, fallback (Phase 4)
+│   ├── viz/                 # Plotly chart builders (Phase 5)
+│   ├── export/              # Jinja2 templates, WeasyPrint PDF (Phase 6)
+│   ├── cli/                 # Typer CLI (Phase 7)
+│   └── app/                 # Streamlit Web UI (Phase 7)
 ├── tests/                   # pytest fixtures + unit tests
 ├── pyproject.toml           # Project metadata, deps, tool config
 ├── Makefile                 # Dev automation (install, lint, test, ...)
@@ -222,9 +242,9 @@ uv run pytest -m slow -v
 | 1 | Environment & Scaffolding | ✅ Complete (2026-08-06) |
 | 2 | Core Ingestion & Audit Engine | ✅ Complete (2026-08-07) |
 | 3 | Statistical Mining Engine | ✅ Complete (2026-08-08) |
-| 4 | Privacy Abstraction & AI Narrative | ⏳ Next |
-| 5 | Visualization Engine | ⏳ Pending |
-| 6 | Export Engine (HTML/PDF) | ⏳ Pending |
+| 4 | Privacy Abstraction & AI Narrative | ✅ Complete (2026-08-09) |
+| 5 | Visualization Engine | ✅ Complete (2026-08-10) |
+| 6 | Export Engine (HTML/PDF) | ⏳ Next |
 | 7 | Interfaces (CLI, Streamlit, Python SDK) | ⏳ Pending |
 | 8 | Testing, CI/CD, PyPI Packaging | ⏳ Pending |
 
